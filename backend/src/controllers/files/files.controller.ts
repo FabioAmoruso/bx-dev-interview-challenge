@@ -4,6 +4,7 @@ import { FilesService } from '@/services/files/files.service';
 import {
   BadRequestException,
   Controller,
+  Delete,
   Get,
   Post,
   Query,
@@ -71,5 +72,13 @@ export class FilesController {
     const seconds = expiresIn ? parseInt(expiresIn, 10) : 60;
     const url = await this.filesService.getPresignedUrl(key, seconds);
     return { url };
+  }
+
+  /**
+   * DELETE /api/files?key=...
+   */
+  @Delete()
+  async deleteFile(@Query('key') key: string) {
+    return this.filesService.deleteFile(key);
   }
 }

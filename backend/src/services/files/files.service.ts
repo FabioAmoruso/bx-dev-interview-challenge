@@ -1,5 +1,6 @@
 import { GlobalConfig } from '@/configs/types';
 import {
+  DeleteObjectCommand,
   GetObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
@@ -120,6 +121,23 @@ export class FilesService {
     } catch (err) {
       this.logger.error('S3 list error', err);
       throw new InternalServerErrorException('Failed to list files from S3');
+    }
+  }
+
+  /**
+   * Delete a file from S3.
+   */
+  async deleteFile(key: string): Promise<void> {
+    try {
+      await this.s3.send(
+        new DeleteObjectCommand({
+          Bucket: this.bucket,
+          Key: key,
+        }),
+      );
+    } catch (err) {
+      this.logger.error('S3 delete error', err);
+      throw new InternalServerErrorException('Failed to delete file from S3');
     }
   }
 }

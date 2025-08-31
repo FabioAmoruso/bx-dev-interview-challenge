@@ -52,4 +52,18 @@ export class FilesService {
     const data: PresignedUrlResponse = await response.json();
     return data.url;
   }
+
+  async deleteFile(key: string): Promise<void> {
+    const response = await fetch(
+      `${this.baseUrl}?key=${encodeURIComponent(key)}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Failed to delete file: ${error}`);
+    }
+  }
 }

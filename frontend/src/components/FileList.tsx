@@ -24,9 +24,10 @@ import { formatDate, formatFileSize } from "../utils/files";
 type Props = {
   onError: (error: string) => void;
   reloadKey: number;
+  onDelete: (key: string) => void;
 };
 
-const FileList: FC<Props> = ({ onError, reloadKey }) => {
+const FileList: FC<Props> = ({ onError, reloadKey, onDelete }) => {
   const [files, setFiles] = useState<FileItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -161,6 +162,14 @@ const FileList: FC<Props> = ({ onError, reloadKey }) => {
         >
           <MenuItem onClick={() => handleDownload(selectedFile ?? "")}>
             <ListItemText primary="Download" />
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              onDelete(selectedFile ?? "");
+              handleMenuClose();
+            }}
+          >
+            <ListItemText primary="Delete" sx={{ color: "red" }} />
           </MenuItem>
         </Menu>
       </CardContent>

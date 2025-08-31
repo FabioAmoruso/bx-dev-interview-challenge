@@ -20,6 +20,7 @@ import { useState } from "react";
 import FileUpload from "./components/FileUpload";
 import FileList from "./components/FileList";
 import theme from "./theme";
+import { FilesService } from "./services/files.service";
 
 function App() {
   const [uploadMessage, setUploadMessage] = useState<string | null>(null);
@@ -40,6 +41,16 @@ function App() {
   const handleFileListError = (error: string) => {
     setUploadError(error);
     setUploadMessage(null);
+  };
+
+  const handleDelete = async (key: string) => {
+    try {
+      const filesService = new FilesService();
+      await filesService.deleteFile(key);
+      setReloadKey((prev) => prev + 1);
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
   };
 
   return (
@@ -97,7 +108,11 @@ function App() {
               </Grid>
 
               <Grid size={12}>
-                <FileList onError={handleFileListError} reloadKey={reloadKey} />
+                <FileList
+                  onError={handleFileListError}
+                  reloadKey={reloadKey}
+                  onDelete={handleDelete}
+                />
               </Grid>
             </Grid>
           </Container>
