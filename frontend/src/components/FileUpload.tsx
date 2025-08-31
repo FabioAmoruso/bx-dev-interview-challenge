@@ -16,7 +16,7 @@ type Props = {
   onUploadError: (error: string) => void;
 };
 
-export const FileUpload: FC<Props> = ({ onUploadSuccess, onUploadError }) => {
+const FileUpload: FC<Props> = ({ onUploadSuccess, onUploadError }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -166,3 +166,5 @@ export const FileUpload: FC<Props> = ({ onUploadSuccess, onUploadError }) => {
     </Card>
   );
 };
+
+export default FileUpload;

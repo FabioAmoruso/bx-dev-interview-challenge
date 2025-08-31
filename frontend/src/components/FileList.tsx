@@ -20,7 +20,7 @@ type Props = {
   onError: (error: string) => void;
 };
 
-export const FileList: FC<Props> = ({ onError }) => {
+const FileList: FC<Props> = ({ onError }) => {
   const [files, setFiles] = useState<FileItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -109,3 +109,5 @@ export const FileList: FC<Props> = ({ onError }) => {
     </Card>
   );
 };
+
+export default FileList;

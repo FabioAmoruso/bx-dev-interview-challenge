@@ -17,8 +17,8 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useState } from "react";
-import { FileUpload } from "./components/FileUpload";
-import { FileList } from "./components/FileList";
+import FileUpload from "./components/FileUpload";
+import FileList from "./components/FileList";
 import theme from "./theme";
 
 function App() {
