@@ -1,14 +1,23 @@
+import { BASE_URL } from "../constants/baseUrl";
 import { FileItem, PresignedUrlResponse, UploadResponse } from "../types/files";
+import authService from "./auth.service";
 
 export class FilesService {
-  private baseUrl = "/api/files";
+  private readonly baseUrl = `${BASE_URL}/files`;
 
   async uploadFile(file: File): Promise<UploadResponse> {
     const formData = new FormData();
     formData.append("file", file);
 
+    const token = authService.getToken();
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${this.baseUrl}/upload`, {
       method: "POST",
+      headers,
       body: formData,
     });
 
@@ -26,7 +35,15 @@ export class FilesService {
       params.append("prefix", prefix);
     }
 
-    const response = await fetch(`${this.baseUrl}?${params.toString()}`);
+    const token = authService.getToken();
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${this.baseUrl}?${params.toString()}`, {
+      headers,
+    });
 
     if (!response.ok) {
       const error = await response.text();
@@ -42,7 +59,15 @@ export class FilesService {
       params.append("expiresIn", expiresIn.toString());
     }
 
-    const response = await fetch(`${this.baseUrl}/url?${params.toString()}`);
+    const token = authService.getToken();
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${this.baseUrl}/url?${params.toString()}`, {
+      headers,
+    });
 
     if (!response.ok) {
       const error = await response.text();
@@ -54,10 +79,17 @@ export class FilesService {
   }
 
   async deleteFile(key: string): Promise<void> {
+    const token = authService.getToken();
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const response = await fetch(
       `${this.baseUrl}?key=${encodeURIComponent(key)}`,
       {
         method: "DELETE",
+        headers,
       }
     );
 

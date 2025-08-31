@@ -1,3 +1,4 @@
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 import { ALLOWED_MIME_TYPES, MAX_FILE_SIZE } from '@/constants/files';
 import { UploadResponseDto } from '@/dtos/files/upload-response.dto';
 import { FilesService } from '@/services/files/files.service';
@@ -9,6 +10,7 @@ import {
   Post,
   Query,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -17,6 +19,7 @@ import * as multer from 'multer';
 const memoryStorage = multer.memoryStorage();
 
 @Controller('files')
+@UseGuards(JwtAuthGuard)
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
