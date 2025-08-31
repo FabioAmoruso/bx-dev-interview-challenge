@@ -74,6 +74,9 @@ export class FilesService {
     const cmd = new GetObjectCommand({
       Bucket: this.bucket,
       Key: key,
+      ResponseContentDisposition: `attachment; filename="${encodeURIComponent(
+        key.split('/').pop() || key,
+      )}"`,
     });
 
     try {

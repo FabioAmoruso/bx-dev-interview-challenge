@@ -1,7 +1,12 @@
+import { MoreVert } from "@mui/icons-material";
 import {
   Card,
   CardContent,
   CircularProgress,
+  IconButton,
+  ListItemText,
+  Menu,
+  MenuItem,
   Paper,
   Table,
   TableBody,
@@ -11,7 +16,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import { FC, useEffect, useState } from "react";
+import { FC, MouseEvent, useEffect, useState } from "react";
 import { FilesService } from "../services/files.service";
 import { FileItem } from "../types/files";
 import { formatDate, formatFileSize } from "../utils/files";
@@ -23,6 +28,8 @@ type Props = {
 const FileList: FC<Props> = ({ onError }) => {
   const [files, setFiles] = useState<FileItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   const filesService = new FilesService();
 
@@ -37,6 +44,31 @@ const FileList: FC<Props> = ({ onError }) => {
       onError(errorMessage);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleMenuOpen = (event: MouseEvent<HTMLElement>, fileKey: string) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedFile(fileKey);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedFile(null);
+  };
+
+  const handleDownload = async (key: string) => {
+    try {
+      const url = await filesService.getDownloadUrl(key);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = key.split("/").pop() || key;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      handleMenuClose();
+    } catch (err) {
+      onError(err instanceof Error ? err.message : "Download failed");
     }
   };
 
@@ -99,12 +131,37 @@ const FileList: FC<Props> = ({ onError }) => {
                         {formatDate(file.lastModified)}
                       </Typography>
                     </TableCell>
+                    <TableCell align="right">
+                      <IconButton
+                        onClick={(event) => handleMenuOpen(event, file.key)}
+                      >
+                        <MoreVert />
+                      </IconButton>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
         )}
+
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <MenuItem onClick={() => handleDownload(selectedFile ?? "")}>
+            <ListItemText primary="Download" />
+          </MenuItem>
+        </Menu>
       </CardContent>
     </Card>
   );
