@@ -24,10 +24,12 @@ import theme from "./theme";
 function App() {
   const [uploadMessage, setUploadMessage] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   const handleUploadSuccess = () => {
     setUploadMessage("File uploaded successfully!");
     setUploadError(null);
+    setReloadKey((prev) => prev + 1);
   };
 
   const handleUploadError = (error: string) => {
@@ -95,7 +97,7 @@ function App() {
               </Grid>
 
               <Grid size={12}>
-                <FileList onError={handleFileListError} />
+                <FileList onError={handleFileListError} reloadKey={reloadKey} />
               </Grid>
             </Grid>
           </Container>

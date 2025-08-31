@@ -23,9 +23,10 @@ import { formatDate, formatFileSize } from "../utils/files";
 
 type Props = {
   onError: (error: string) => void;
+  reloadKey: number;
 };
 
-const FileList: FC<Props> = ({ onError }) => {
+const FileList: FC<Props> = ({ onError, reloadKey }) => {
   const [files, setFiles] = useState<FileItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -74,7 +75,7 @@ const FileList: FC<Props> = ({ onError }) => {
 
   useEffect(() => {
     loadFiles();
-  }, []);
+  }, [reloadKey]);
 
   if (isLoading) {
     return (
