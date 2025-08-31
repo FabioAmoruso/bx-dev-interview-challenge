@@ -18,6 +18,7 @@ import {
 import Grid from "@mui/material/Grid";
 import { useState } from "react";
 import { FileUpload } from "./components/FileUpload";
+import { FileList } from "./components/FileList";
 import theme from "./theme";
 
 function App() {
@@ -30,6 +31,11 @@ function App() {
   };
 
   const handleUploadError = (error: string) => {
+    setUploadError(error);
+    setUploadMessage(null);
+  };
+
+  const handleFileListError = (error: string) => {
     setUploadError(error);
     setUploadMessage(null);
   };
@@ -86,6 +92,10 @@ function App() {
                   onUploadSuccess={handleUploadSuccess}
                   onUploadError={handleUploadError}
                 />
+              </Grid>
+
+              <Grid size={12}>
+                <FileList onError={handleFileListError} />
               </Grid>
             </Grid>
           </Container>
