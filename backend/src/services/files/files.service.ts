@@ -12,7 +12,6 @@ import {
   Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { randomUUID } from 'crypto';
 
 @Injectable()
 export class FilesService {
@@ -49,7 +48,7 @@ export class FilesService {
     const safeName = file.originalname
       .replace(/\s+/g, '_')
       .replace(/[^a-zA-Z0-9_.-]/g, '');
-    const key = `${folder}${randomUUID()}-${safeName}`;
+    const key = `${folder}${safeName}`;
 
     const cmd = new PutObjectCommand({
       Bucket: this.bucket,
@@ -104,11 +103,17 @@ export class FilesService {
         }),
       );
 
-      return (out.Contents ?? []).map((item) => ({
-        key: item.Key!,
-        lastModified: item.LastModified?.toISOString(),
-        size: item.Size,
-      }));
+      return (out.Contents ?? [])
+        .map((item) => ({
+          key: item.Key!,
+          lastModified: item.LastModified?.toISOString(),
+          size: item.Size,
+        }))
+        .sort((a, b) => {
+          const dateA = a.lastModified ? new Date(a.lastModified).getTime() : 0;
+          const dateB = b.lastModified ? new Date(b.lastModified).getTime() : 0;
+          return dateB - dateA; // Descending order (newest first)
+        });
     } catch (err) {
       this.logger.error('S3 list error', err);
       throw new InternalServerErrorException('Failed to list files from S3');
