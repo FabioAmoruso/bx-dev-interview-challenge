@@ -7,4 +7,10 @@ export type GlobalConfig = {
     secretAccessKey: string;
     bucket: string;
   };
+  auth: {
+    email: string;
+    password: string;
+    secret: string;
+    expiresIn: string;
+  };
 };
